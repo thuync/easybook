@@ -1,25 +1,25 @@
-function getElement(indentify) {
-  var idEl = $("#" + indentify);
-  if (idEl.length == 0) {
-    idEl = $("." + indentify);
-    if (idEl.length == 0) {
-      idEl = $(indentify);
-      if (idEl.length == 0) {
-        console.error("Not found element: " + indentify);
+function getElement(selector) {
+  var element = $("#" + selector);
+  if (element.length == 0) {
+    element = $("." + selector);
+    if (element.length == 0) {
+      element = $(selector);
+      if (element.length == 0) {
+        console.error("Not found element: " + selector);
         return null
       }
     }
-    idEl = $(idEl[0]);
+    element = $(element[0]);
   }
-  return idEl;
+  return element;
 }
 
-function onlyRemain(remainIndentify, parrentIdentify) {
-  var remainEl = getElement(remainIndentify);
-  var parrentEl = getElement(parrentIdentify);
+function keepOnly(keepSelector, parentSelector) {
+  var remainEl = getElement(keepSelector);
+  var parrentEl = getElement(parentSelector);
 
   if (!remainEl || !parrentEl) {
-    console.error("Not found element: " + remainIndentify + " or " + parrentIdentify);
+    console.error("Not found element: " + keepSelector + " or " + parentSelector);
     return;
   }
   var remainEl = remainEl.detach();
@@ -31,10 +31,36 @@ function onlyRemain(remainIndentify, parrentIdentify) {
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.message === "print_page") {
-      onlyRemain('container', 'body');
-      onlyRemain('js-toc', 'container');
-      onlyRemain('section[role="document"]', 'js-toc');
-      onlyRemain('sbo-rt-content', 'section[role="document"]');
+      keepOnly('container', 'body');
+      keepOnly('js-toc', 'container');
+      keepOnly('section[role="document"]', 'js-toc');
+      keepOnly('sbo-rt-content', 'section[role="document"]');
+
+      console.log('Change CSS');
+      var body = $('body');
+      body.css({
+          "padding": "0px"
+      });
+      var div = $('#sbo-rt-content');
+      div.css({
+          "maxWidth": "100%",
+          "margin": "0px",
+          "padding": "0px"
+      });
+
+      var p = $('.scalefonts #sbo-rt-content div p');
+      p.css({
+          "textAlign": "justify"
+      });
+
+      var img = $('#sbo-rt-content .image');
+      img.css({
+          "textAlign": "center"
+      });
+
+      var h = $('#sbo-rt-content h2');
+      h.attr('style', 'margin-top: 0px !important');
+
       window.print();
     }
   }
