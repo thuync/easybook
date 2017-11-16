@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+  "name": "Easy Book",
+  "version": "0.0.0.1",
+  "background": {
+    "scripts": [
+      "lib/jquery-3.2.1.min.js",
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "lib/jquery-3.2.1.min.js",
+        "lib/jquery.xpath.min.js",
+        "content.js"
+      ]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "images/icon.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "notifications",
+    "http://*/",
+    "https://*/",
+    "printerProvider"
+  ]
+}
